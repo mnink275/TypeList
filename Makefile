@@ -24,7 +24,7 @@ build-debug build-release: build-%: cmake-%
 # Run
 .PHONY: run-debug run-release
 run-debug run-release: run-%: build-%
-	@./build_$*/Greeter
+	@./build_$*/TypeList
 
 # Run with `dist-clean` step
 .PHONY: clean-run
