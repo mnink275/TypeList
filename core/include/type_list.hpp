@@ -50,4 +50,16 @@ using push_back_v = typename Pusher<NewType, TList>::PushBackValue;
 template <class NewType, class TList>
 using push_front_v = typename Pusher<NewType, TList>::PushFrontValue;
 
+// Popping
+template <class TList>
+struct PopFront;
+
+template <class FirstType, class ...Others>
+struct PopFront<TypeList<FirstType, Others...>> final {
+  using PopFrontValue = TypeList<Others...>;
+};
+
+template <class TList>
+using pop_front_v = typename PopFront<TList>::PopFrontValue;
+
 }  // namespace ink

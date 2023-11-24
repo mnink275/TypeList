@@ -25,4 +25,11 @@ TEST(TypeList, PushFront) {
   static_assert(std::is_same_v<expected_tl, resulted_tl>);
 }
 
+TEST(TypeList, PopFront) {
+  using type_list = ink::TypeList<int, double, class SomeTag>;
+  using expected_tl = ink::TypeList<double, class SomeTag>;
+  using resulted_tl = ink::pop_front_v<type_list>;
+  static_assert(std::is_same_v<expected_tl, resulted_tl>);
+}
+
 }  // namespace ink::test
