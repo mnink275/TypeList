@@ -9,6 +9,7 @@ TEST(TypeList, LookUp) {
   using type_list = ink::TypeList<int, double, class SomeTag>;
   static_assert(ink::size_v<type_list> == 3);
   static_assert(std::is_same_v<int, ink::front_t<type_list>>);
+  static_assert(std::is_same_v<class SomeTag, ink::back_t<type_list>>);
 }
 
 TEST(TypeList, PushBack) {

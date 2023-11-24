@@ -34,6 +34,26 @@ struct Front<TypeList<FirstType, Others...>> final {
 template <class TList>
 using front_t = typename Front<TList>::FrontType;
 
+// Back type
+template <class TList>
+struct Back;
+
+template <class ...Types>
+struct Back<TypeList<Types...>> {
+  // C++20 std::type_identity
+  template <class T>
+  struct TypeIdentity { using Type = T; };
+
+  // 1) Fold-expression:
+  //    E = (A<Args>{}, ...) --> (A<T1>{}, (..., (A<Tn - 1>{}, A<Tn>{})))
+  // 2) decltype(E) == decltype(A<Tn>{}) == A<Tn>
+  // 3) A<Tn>::Type == Tn
+  using BackType = typename decltype((TypeIdentity<Types>{}, ...))::Type;
+};
+
+template <class TList>
+using back_t = typename Back<TList>::BackType;
+
 // Pushing
 template <class NewType, class TList>
 struct Pusher;
