@@ -64,6 +64,11 @@ struct Back<TypeList<Types...>> {
   using BackType = typename decltype((TypeIdentity<Types>{}, ...))::Type;
 };
 
+template <>
+struct Back<TypeList<>> final {
+  using BackType = impl::EmptyList;
+};
+
 template <class TList>
 using back_t = typename Back<TList>::BackType;
 
@@ -94,7 +99,7 @@ struct PopFront<TypeList<FirstType, Others...>> final {
 
 template <>
 struct PopFront<TypeList<>> final {
-  using PopFrontValue = impl::EmptyList;
+  using PopFrontValue = TypeList<>;
 };
 
 template <class TList>
