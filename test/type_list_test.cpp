@@ -69,6 +69,27 @@ TEST(TypeList, PopFrontFromEmptyList) {
   static_assert(std::is_same_v<expected_tl, resulted_tl>);
 }
 
+TEST(TypeList, PopBackBasic) {
+  using type_list = ink::TypeList<int, double, class SomeTag>;
+  using expected_tl = ink::TypeList<int, double>;
+  using resulted_tl = ink::pop_back_t<type_list>;
+  static_assert(std::is_same_v<expected_tl, resulted_tl>);
+}
+
+TEST(TypeList, PopBackFromOneTypeList) {
+  using one_type_tl = ink::TypeList<int>;
+  using expected_tl = ink::TypeList<>;
+  using resulted_tl = ink::pop_back_t<one_type_tl>;
+  static_assert(std::is_same_v<expected_tl, resulted_tl>);
+}
+
+TEST(TypeList, PopBackFromEmptyList) {
+  using empty_tl = ink::TypeList<>;
+  using expected_tl = ink::TypeList<>;
+  using resulted_tl = ink::pop_back_t<empty_tl>;
+  static_assert(std::is_same_v<expected_tl, resulted_tl>);
+}
+
 TEST(TypeList, At) {
   using type_list = ink::TypeList<int, double, class SomeTag>;
 

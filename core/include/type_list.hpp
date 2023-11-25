@@ -7,14 +7,15 @@
 
 namespace ink {
 
+// Forward declaration
+template <class... Types>
+struct TypeList;
+
 namespace impl {
 
 struct EmptyList;
 
 }  // namespace impl
-
-template <class... Types>
-struct TypeList;
 
 // TypeList types pack size
 template <class TList>
@@ -87,7 +88,7 @@ using push_back_t = typename Pusher<NewType, TList>::PushBackType;
 template <class NewType, class TList>
 using push_front_t = typename Pusher<NewType, TList>::PushFrontType;
 
-// Popping
+// Pop Front
 template <class TList>
 struct PopFront;
 
@@ -103,6 +104,38 @@ struct PopFront<TypeList<>> final {
 
 template <class TList>
 using pop_front_t = typename PopFront<TList>::PopFrontType;
+
+// Pop Back
+// TODO: Is there an easier way?
+template <std::size_t curr_size, class TList>
+struct PopBackImpl {
+  using Type =
+      TypeList<front_t<TList>,
+               typename PopBackImpl<curr_size - 1, pop_front_t<TList>>::Type>;
+};
+
+template <class TList>
+struct PopBackImpl<2, TList> {
+  using Type = front_t<TList>;
+};
+
+template <class TList>
+struct PopBackImpl<1, TList> {
+  using Type = TypeList<>;
+};
+
+template <class TList>
+struct PopBackImpl<0, TList> {
+  using Type = TypeList<>;
+};
+
+template <class TList>
+struct PopBack {
+  using PopBackType = typename PopBackImpl<size_v<TList>, TList>::Type;
+};
+
+template <class TList>
+using pop_back_t = typename PopBack<TList>::PopBackType;
 
 // At
 template <std::size_t target_index, std::size_t curr_inex, class TList>
