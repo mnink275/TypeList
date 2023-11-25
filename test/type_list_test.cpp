@@ -48,6 +48,30 @@ TEST(TypeList, PushFrontToEmptyList) {
   static_assert(std::is_same_v<expected_tl, resulted_tl>);
 }
 
+TEST(TypeList, Concatenate) {
+  using left_tl = ink::TypeList<int, double>;
+  using right_tl = ink::TypeList<class SomeTag, int>;
+  using expected_tl = ink::TypeList<int, double, class SomeTag, int>;
+  using resulted_tl = ink::concat_t<left_tl, right_tl>;
+  static_assert(std::is_same_v<expected_tl, resulted_tl>);
+}
+
+TEST(TypeList, ConcatenateOneEmpty) {
+  using left_tl = ink::TypeList<int, double>;
+  using right_tl = ink::TypeList<>;
+  using expected_tl = ink::TypeList<int, double>;
+  using resulted_tl = ink::concat_t<left_tl, right_tl>;
+  static_assert(std::is_same_v<expected_tl, resulted_tl>);
+}
+
+TEST(TypeList, ConcatenateBothEmpty) {
+  using left_tl = ink::TypeList<>;
+  using right_tl = ink::TypeList<>;
+  using expected_tl = ink::TypeList<>;
+  using resulted_tl = ink::concat_t<left_tl, right_tl>;
+  static_assert(std::is_same_v<expected_tl, resulted_tl>);
+}
+
 TEST(TypeList, PopFrontBasic) {
   using type_list = ink::TypeList<int, double, class SomeTag>;
   using expected_tl = ink::TypeList<double, class SomeTag>;

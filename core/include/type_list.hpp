@@ -88,6 +88,18 @@ using push_back_t = typename Pusher<NewType, TList>::PushBackType;
 template <class NewType, class TList>
 using push_front_t = typename Pusher<NewType, TList>::PushFrontType;
 
+// Concat
+template <class TListLeft, class TListRight>
+struct Concat;
+
+template <class... TypesLeft, class... TypesRight>
+struct Concat<TypeList<TypesLeft...>, TypeList<TypesRight...>> final {
+  using Type = TypeList<TypesLeft..., TypesRight...>;
+};
+
+template <class TListLeft, class TListRight>
+using concat_t = typename Concat<TListLeft, TListRight>::Type;
+
 // Pop Front
 template <class TList>
 struct PopFront;
