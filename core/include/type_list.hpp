@@ -105,6 +105,26 @@ struct PopFront<TypeList<>> final {
 template <class TList>
 using pop_front_v = typename PopFront<TList>::PopFrontValue;
 
+// At
+template <std::size_t target_index, std::size_t curr_inex, class TList>
+struct AtImpl {
+  using Type =
+      typename AtImpl<target_index, curr_inex + 1, pop_front_v<TList>>::Type;
+};
+
+template <std::size_t target_index, class TList>
+struct AtImpl<target_index, target_index, TList> {
+  using Type = front_t<TList>;
+};
+
+template <std::size_t target_index, class TList>
+struct At {
+  using Type = typename AtImpl<target_index, 0, TList>::Type;
+};
+
+template <std::size_t target_index, class TList>
+using at_t = typename At<target_index, TList>::Type;
+
 // Contains
 template <class TargetType, class TList>
 struct Contains;

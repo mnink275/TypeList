@@ -6,6 +6,8 @@
 namespace ink::test {
 
 // Note: tests always pass if they compile
+
+// Basics
 TEST(TypeList, LookUp) {
   using type_list = ink::TypeList<int, double, class SomeTag>;
   static_assert(ink::size_v<type_list> == 3);
@@ -67,6 +69,15 @@ TEST(TypeList, PopFrontFromEmptyList) {
   static_assert(std::is_same_v<expected_tl, resulted_tl>);
 }
 
+TEST(TypeList, At) {
+  using type_list = ink::TypeList<int, double, class SomeTag>;
+
+  static_assert(std::is_same_v<int, ink::at_t<0, type_list>>);
+  static_assert(std::is_same_v<double, ink::at_t<1, type_list>>);
+  static_assert(std::is_same_v<class SomeTag, ink::at_t<2, type_list>>);
+}
+
+// Algorithms
 TEST(TypeList, Contains) {
   using type_list = ink::TypeList<int, double, class SomeTag>;
 
