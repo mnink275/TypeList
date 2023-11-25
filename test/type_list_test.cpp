@@ -162,6 +162,50 @@ TEST(TypeList, ConcatenateBothEmpty) {
   static_assert(std::is_same_v<expected_tl, resulted_tl>);
 }
 
+TEST(TypeList, Slice) {
+  using list_type = ink::TypeList<int, double, class SomeTag, std::string>;
+  using slice_result = ink::slice_t<2, list_type>;
+
+  using expected_left_tl = ink::TypeList<int, double>;
+  static_assert(std::is_same_v<expected_left_tl, slice_result::left>);
+
+  using expected_right_tl = ink::TypeList<class SomeTag, std::string>;
+  static_assert(std::is_same_v<expected_right_tl, slice_result::right>);
+}
+
+TEST(TypeList, SliceLeftBound) {
+  using list_type = ink::TypeList<int, double, class SomeTag, std::string>;
+  using slice_result = ink::slice_t<0, list_type>;
+
+  using expected_left_tl = ink::TypeList<>;
+  static_assert(std::is_same_v<expected_left_tl, slice_result::left>);
+
+  using expected_right_tl = list_type;
+  static_assert(std::is_same_v<expected_right_tl, slice_result::right>);
+}
+
+TEST(TypeList, SliceRightBound) {
+  using list_type = ink::TypeList<int, double, class SomeTag, std::string>;
+  using slice_result = ink::slice_t<size_v<list_type> - 1, list_type>;
+
+  using expected_left_tl = pop_back_t<list_type>;
+  static_assert(std::is_same_v<expected_left_tl, slice_result::left>);
+
+  using expected_right_tl = ink::TypeList<back_t<list_type>>;
+  static_assert(std::is_same_v<expected_right_tl, slice_result::right>);
+}
+
+TEST(TypeList, SliceOutOfBound) {
+  using list_type = ink::TypeList<int, double, class SomeTag, std::string>;
+  using slice_result = ink::slice_t<size_v<list_type>, list_type>;
+
+  using expected_left_tl = list_type;
+  static_assert(std::is_same_v<expected_left_tl, slice_result::left>);
+
+  using expected_right_tl = ink::TypeList<>;
+  static_assert(std::is_same_v<expected_right_tl, slice_result::right>);
+}
+
 // Algorithms
 TEST(TypeList, Contains) {
   using type_list = ink::TypeList<int, double, class SomeTag>;

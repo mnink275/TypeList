@@ -149,6 +149,48 @@ struct PopBack {
 template <class TList>
 using pop_back_t = typename PopBack<TList>::Type;
 
+// Slice
+// TODO: simplify
+template <std::size_t left_size, std::size_t right_size, class TList>
+struct SliceImpl {
+  using Left = concat_t<
+      TypeList<front_t<TList>>,
+      typename SliceImpl<left_size - 1, right_size, pop_front_t<TList>>::Left>;
+  using Right =
+      typename SliceImpl<left_size - 1, right_size, pop_front_t<TList>>::Right;
+};
+
+template <std::size_t right_size, class TList>
+struct SliceImpl<1, right_size, TList> {
+  using Left = TypeList<front_t<TList>>;
+  using Right = typename SliceImpl<right_size, 0, pop_front_t<TList>>::Left;
+};
+
+template <class TList>
+struct SliceImpl<0, 0, TList> {
+  using Left = TypeList<>;
+};
+
+template <std::size_t right_size, class TList>
+struct SliceImpl<0, right_size, TList> {
+  using Left = TypeList<>;
+  using Right = TList;
+};
+
+template <std::size_t splice_index, class TList>
+struct slice_t final {
+  using left = typename SliceImpl<splice_index, size_v<TList> - splice_index,
+                                  TList>::Left;
+  using right = typename SliceImpl<splice_index, size_v<TList> - splice_index,
+                                   TList>::Right;
+};
+
+template <std::size_t splice_index, class TList>
+using slice_left_t = typename slice_t<splice_index, TList>::left;
+
+template <std::size_t splice_index, class TList>
+using slice_right_t = typename slice_t<splice_index, TList>::right;
+
 // At
 template <std::size_t target_index, std::size_t curr_inex, class TList>
 struct AtImpl {
