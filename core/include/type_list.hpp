@@ -122,13 +122,13 @@ using pop_front_t = typename PopFront<TList>::PopFrontType;
 template <std::size_t curr_size, class TList>
 struct PopBackImpl {
   using Type =
-      TypeList<front_t<TList>,
+      concat_t<TypeList<front_t<TList>>,
                typename PopBackImpl<curr_size - 1, pop_front_t<TList>>::Type>;
 };
 
 template <class TList>
 struct PopBackImpl<2, TList> {
-  using Type = front_t<TList>;
+  using Type = TypeList<front_t<TList>>;
 };
 
 template <class TList>

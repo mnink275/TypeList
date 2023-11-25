@@ -86,6 +86,22 @@ TEST(TypeList, PopFrontFromOneTypeList) {
   static_assert(std::is_same_v<expected_tl, resulted_tl>);
 }
 
+TEST(TypeList, PopFrontChain) {
+  using tl_size_3 = ink::TypeList<int, double, class SomeTag>;
+  using expected_tl_size_2 = ink::TypeList<double, class SomeTag>;
+  static_assert(
+      std::is_same_v<expected_tl_size_2, ink::pop_front_t<tl_size_3>>);
+
+  using tl_size_2 = expected_tl_size_2;
+  using expected_tl_size_1 = ink::TypeList<class SomeTag>;
+  static_assert(
+      std::is_same_v<expected_tl_size_1, ink::pop_front_t<tl_size_2>>);
+
+  using tl_size_1 = expected_tl_size_1;
+  using expected_tl_empty = ink::TypeList<>;
+  static_assert(std::is_same_v<expected_tl_empty, ink::pop_front_t<tl_size_1>>);
+}
+
 TEST(TypeList, PopFrontFromEmptyList) {
   using empty_tl = ink::TypeList<>;
   using expected_tl = ink::TypeList<>;
@@ -105,6 +121,20 @@ TEST(TypeList, PopBackFromOneTypeList) {
   using expected_tl = ink::TypeList<>;
   using resulted_tl = ink::pop_back_t<one_type_tl>;
   static_assert(std::is_same_v<expected_tl, resulted_tl>);
+}
+
+TEST(TypeList, PopBackChain) {
+  using tl_size_3 = ink::TypeList<int, double, class SomeTag>;
+  using expected_tl_size_2 = ink::TypeList<int, double>;
+  static_assert(std::is_same_v<expected_tl_size_2, ink::pop_back_t<tl_size_3>>);
+
+  using tl_size_2 = expected_tl_size_2;
+  using expected_tl_size_1 = ink::TypeList<int>;
+  static_assert(std::is_same_v<expected_tl_size_1, ink::pop_back_t<tl_size_2>>);
+
+  using tl_size_1 = expected_tl_size_1;
+  using expected_tl_empty = ink::TypeList<>;
+  static_assert(std::is_same_v<expected_tl_empty, ink::pop_back_t<tl_size_1>>);
 }
 
 TEST(TypeList, PopBackFromEmptyList) {
