@@ -77,6 +77,14 @@ TEST(TypeList, At) {
   static_assert(std::is_same_v<class SomeTag, ink::at_t<2, type_list>>);
 }
 
+TEST(TypeList, Find) {
+  using type_list = ink::TypeList<int, double, class SomeTag, int>;
+
+  static_assert(ink::find_v<int, type_list> == 0);
+  static_assert(ink::find_v<double, type_list> == 1);
+  static_assert(ink::find_v<class SomeTag, type_list> == 2);
+}
+
 // Algorithms
 TEST(TypeList, Contains) {
   using type_list = ink::TypeList<int, double, class SomeTag>;
