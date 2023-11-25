@@ -82,4 +82,12 @@ TEST(TypeList, Contains) {
   static_assert(!ink::contains_v<int, empty_tl>);
 }
 
+TEST(TypeList, Count) {
+  using type_list = ink::TypeList<int, double, int>;
+
+  static_assert(ink::count_v<int, type_list> == 2);
+  static_assert(ink::count_v<double, type_list> == 1);
+  static_assert(ink::count_v<class SomeTag, type_list> == 0);
+}
+
 }  // namespace ink::test

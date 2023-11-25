@@ -122,6 +122,24 @@ struct Contains<TargetType, TypeList<>> : std::false_type {};
 template <class TargetType, class TList>
 inline constexpr auto contains_v = Contains<TargetType, TList>::value;
 
+// Count
+template <class TargetType, class TList>
+struct Count;
+
+template <class TargetType, class... Types>
+struct Count<TargetType, TypeList<Types...>>
+    : std::integral_constant<
+          std::size_t,
+          std::is_same_v<TargetType, front_t<TypeList<Types...>>> +
+              Contains<TargetType, pop_front_v<TypeList<Types...>>>::value> {};
+
+template <class TargetType>
+struct Count<TargetType, TypeList<>> : std::integral_constant<std::size_t, 0> {
+};
+
+template <class TargetType, class TList>
+inline constexpr auto count_v = Count<TargetType, TList>::value;
+
 // TypeList definition
 template <class... Types>
 struct TypeList final {
