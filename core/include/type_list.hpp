@@ -21,12 +21,11 @@ template <class TList>
 struct Size;
 
 template <class... Types>
-struct Size<TypeList<Types...>> final {
-  static constexpr auto kSize = sizeof...(Types);
-};
+struct Size<TypeList<Types...>>
+    : std::integral_constant<std::size_t, sizeof...(Types)> {};
 
 template <class TList>
-inline constexpr auto size_v = Size<TList>::kSize;
+inline constexpr auto size_v = Size<TList>::value;
 
 // Front type
 template <class TList>
@@ -78,15 +77,15 @@ struct Pusher;
 
 template <class NewType, class... Types>
 struct Pusher<NewType, TypeList<Types...>> final {
-  using PushBackValue = TypeList<Types..., NewType>;
-  using PushFrontValue = TypeList<NewType, Types...>;
+  using PushBackType = TypeList<Types..., NewType>;
+  using PushFrontType = TypeList<NewType, Types...>;
 };
 
 template <class NewType, class TList>
-using push_back_v = typename Pusher<NewType, TList>::PushBackValue;
+using push_back_t = typename Pusher<NewType, TList>::PushBackType;
 
 template <class NewType, class TList>
-using push_front_v = typename Pusher<NewType, TList>::PushFrontValue;
+using push_front_t = typename Pusher<NewType, TList>::PushFrontType;
 
 // Popping
 template <class TList>
@@ -94,22 +93,22 @@ struct PopFront;
 
 template <class FirstType, class... Others>
 struct PopFront<TypeList<FirstType, Others...>> final {
-  using PopFrontValue = TypeList<Others...>;
+  using PopFrontType = TypeList<Others...>;
 };
 
 template <>
 struct PopFront<TypeList<>> final {
-  using PopFrontValue = TypeList<>;
+  using PopFrontType = TypeList<>;
 };
 
 template <class TList>
-using pop_front_v = typename PopFront<TList>::PopFrontValue;
+using pop_front_t = typename PopFront<TList>::PopFrontType;
 
 // At
 template <std::size_t target_index, std::size_t curr_inex, class TList>
 struct AtImpl {
   using Type =
-      typename AtImpl<target_index, curr_inex + 1, pop_front_v<TList>>::Type;
+      typename AtImpl<target_index, curr_inex + 1, pop_front_t<TList>>::Type;
 };
 
 template <std::size_t target_index, class TList>
@@ -129,7 +128,7 @@ using at_t = typename At<target_index, TList>::Type;
 template <class TargetType, std::size_t curr_inex, class TList>
 struct FindImpl
     : std::integral_constant<std::size_t, FindImpl<TargetType, curr_inex + 1,
-                                                   pop_front_v<TList>>::value> {
+                                                   pop_front_t<TList>>::value> {
 };
 
 template <std::size_t curr_inex, class TList>
@@ -152,7 +151,7 @@ struct Contains<TargetType, TypeList<Types...>>
     : std::integral_constant<
           bool,
           std::is_same_v<TargetType, front_t<TypeList<Types...>>> ||
-              Contains<TargetType, pop_front_v<TypeList<Types...>>>::value> {};
+              Contains<TargetType, pop_front_t<TypeList<Types...>>>::value> {};
 
 template <class TargetType>
 struct Contains<TargetType, TypeList<>> : std::false_type {};
@@ -169,7 +168,7 @@ struct Count<TargetType, TypeList<Types...>>
     : std::integral_constant<
           std::size_t,
           std::is_same_v<TargetType, front_t<TypeList<Types...>>> +
-              Contains<TargetType, pop_front_v<TypeList<Types...>>>::value> {};
+              Contains<TargetType, pop_front_t<TypeList<Types...>>>::value> {};
 
 template <class TargetType>
 struct Count<TargetType, TypeList<>> : std::integral_constant<std::size_t, 0> {
