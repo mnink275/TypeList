@@ -34,16 +34,16 @@ struct Front;
 
 template <class FirstType, class... Others>
 struct Front<TypeList<FirstType, Others...>> final {
-  using FrontType = FirstType;
+  using Type = FirstType;
 };
 
 template <>
 struct Front<TypeList<>> final {
-  using FrontType = impl::EmptyList;
+  using Type = impl::EmptyList;
 };
 
 template <class TList>
-using front_t = typename Front<TList>::FrontType;
+using front_t = typename Front<TList>::Type;
 
 // Back type
 template <class TList>
@@ -61,16 +61,16 @@ struct Back<TypeList<Types...>> {
   //    E = (A<Args>{}, ...) --> (A<T1>{}, (..., (A<Tn - 1>{}, A<Tn>{})))
   // 2) decltype(E) == decltype(A<Tn>{}) == A<Tn>
   // 3) A<Tn>::Type == Tn
-  using BackType = typename decltype((TypeIdentity<Types>{}, ...))::Type;
+  using Type = typename decltype((TypeIdentity<Types>{}, ...))::Type;
 };
 
 template <>
 struct Back<TypeList<>> final {
-  using BackType = impl::EmptyList;
+  using Type = impl::EmptyList;
 };
 
 template <class TList>
-using back_t = typename Back<TList>::BackType;
+using back_t = typename Back<TList>::Type;
 
 // Pushing
 template <class NewType, class TList>
@@ -78,15 +78,15 @@ struct Pusher;
 
 template <class NewType, class... Types>
 struct Pusher<NewType, TypeList<Types...>> final {
-  using PushBackType = TypeList<Types..., NewType>;
-  using PushFrontType = TypeList<NewType, Types...>;
+  using BackType = TypeList<Types..., NewType>;
+  using FrontType = TypeList<NewType, Types...>;
 };
 
 template <class NewType, class TList>
-using push_back_t = typename Pusher<NewType, TList>::PushBackType;
+using push_back_t = typename Pusher<NewType, TList>::BackType;
 
 template <class NewType, class TList>
-using push_front_t = typename Pusher<NewType, TList>::PushFrontType;
+using push_front_t = typename Pusher<NewType, TList>::FrontType;
 
 // Concat
 template <class TListLeft, class TListRight>
@@ -106,16 +106,16 @@ struct PopFront;
 
 template <class FirstType, class... Others>
 struct PopFront<TypeList<FirstType, Others...>> final {
-  using PopFrontType = TypeList<Others...>;
+  using Type = TypeList<Others...>;
 };
 
 template <>
 struct PopFront<TypeList<>> final {
-  using PopFrontType = TypeList<>;
+  using Type = TypeList<>;
 };
 
 template <class TList>
-using pop_front_t = typename PopFront<TList>::PopFrontType;
+using pop_front_t = typename PopFront<TList>::Type;
 
 // Pop Back
 // TODO: Is there an easier way?
@@ -143,11 +143,11 @@ struct PopBackImpl<0, TList> {
 
 template <class TList>
 struct PopBack {
-  using PopBackType = typename PopBackImpl<size_v<TList>, TList>::Type;
+  using Type = typename PopBackImpl<size_v<TList>, TList>::Type;
 };
 
 template <class TList>
-using pop_back_t = typename PopBack<TList>::PopBackType;
+using pop_back_t = typename PopBack<TList>::Type;
 
 // At
 template <std::size_t target_index, std::size_t curr_inex, class TList>
