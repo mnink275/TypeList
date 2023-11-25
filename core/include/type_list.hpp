@@ -127,23 +127,21 @@ using at_t = typename At<target_index, TList>::Type;
 
 // Find
 template <class TargetType, std::size_t curr_inex, class TList>
-struct FindImpl {
-  static constexpr auto Value =
-      FindImpl<TargetType, curr_inex + 1, pop_front_v<TList>>::Value;
+struct FindImpl
+    : std::integral_constant<std::size_t, FindImpl<TargetType, curr_inex + 1,
+                                                   pop_front_v<TList>>::value> {
 };
 
 template <std::size_t curr_inex, class TList>
-struct FindImpl<front_t<TList>, curr_inex, TList> {
-  static constexpr auto Value = curr_inex;
-};
+struct FindImpl<front_t<TList>, curr_inex, TList>
+    : std::integral_constant<std::size_t, curr_inex> {};
 
 template <class TargetType, class TList>
-struct Find {
-  static constexpr auto Value = FindImpl<TargetType, 0, TList>::Value;
-};
+struct Find : std::integral_constant<std::size_t,
+                                     FindImpl<TargetType, 0, TList>::value> {};
 
 template <class TargetType, class TList>
-inline constexpr auto find_v = Find<TargetType, TList>::Value;
+inline constexpr auto find_v = Find<TargetType, TList>::value;
 
 // Contains
 template <class TargetType, class TList>
